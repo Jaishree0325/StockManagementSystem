@@ -1,0 +1,28 @@
+# ====================================================================
+# INFOSYS PROJECT GIT ISOLATION MATRIX
+# ====================================================================
+
+# 📦 Node JavaScript Dependency Enclaves
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ☕ Java Compilation Binaries & Packaging Artifacts
+build/
+bin/
+dist/
+nbproject/private/
+*.class
+*.jar
+*.war
+*.ear
+
+# ⚙️ OS-Specific Cache Directories
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini

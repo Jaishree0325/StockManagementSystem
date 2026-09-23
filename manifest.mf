@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Main-Class: com.stockms.Main
+Class-Path: lib/mysql-connector-j.jar
+Created-By: Stock Management System Build
+Implementation-Title: Stock Management System
+Implementation-Version: 1.0.0
