@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export default function Dashboard() {
-  const [activeForm, setActiveForm] = useState(null);
+  const [activeForm, setActiveForm] = useState('entry'); // Options: 'entry', 'exit', 'reports', 'alerts'
   const [entryLogs, setEntryLogs] = useState([]);
   const [exitLogs, setExitLogs] = useState([]);
   const [alerts, setAlerts] = useState([]);
@@ -9,11 +9,12 @@ export default function Dashboard() {
   const [entryProd, setEntryProd] = useState('');
   const [entryQty, setEntryQty] = useState('');
   const [entrySup, setEntrySup] = useState('');
+  const [entryRem, setEntryRem] = useState('');
+  
   const [exitProd, setExitProd] = useState('');
   const [exitQty, setExitQty] = useState('');
   const [exitReason, setExitReason] = useState('');
 
-  // Fetch running ledger history logs from your live MySQL Database via tunnel
   const fetchDatabaseData = () => {
     fetch('http://localhost:8080/api/data')
       .then(res => res.json())
@@ -26,7 +27,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchDatabaseData();
-    const interval = setInterval(fetchDatabaseData, 3000); // Auto-sync loops every 3 seconds!
+    const interval = setInterval(fetchDatabaseData, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -35,10 +36,10 @@ export default function Dashboard() {
     fetch('http://localhost:8080/api/entry', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ product: entryProd, qty: entryQty, supplier: entrySup })
+      body: JSON.stringify({ product: entryProd, qty: entryQty, supplier: entrySup, remarks: entryRem || 'Web Ingestion' })
     }).then(() => {
-      alert("Stock Entry Ingested and Saved into MySQL Database!");
-      setEntryProd(''); setEntryQty(''); setEntrySup('');
+      alert("Stock Entry Saved Successfully!");
+      setEntryProd(''); setEntryQty(''); setEntrySup(''); setEntryRem('');
       fetchDatabaseData();
     });
   };
@@ -50,100 +51,99 @@ export default function Dashboard() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ product: exitProd, qty: exitQty, reason: exitReason })
     }).then(() => {
-      alert("Stock Exit Processed and Decremented inside MySQL!");
+      alert("Stock Exit Logged and Updated!");
       setExitProd(''); setExitQty(''); setExitReason('');
       fetchDatabaseData();
     });
   };
 
   return (
-    <div style={{ padding: '32px', background: '#f8fafc', minHeight: '100vh', fontFamily: 'system-ui, sans-serif', width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '36px', minHeight: '100%', boxSizing: 'border-box' }}>
       
-      <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', padding: '24px 32px', border: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <h1 style={{ fontSize: '28px', fontWeight: '700', color: '#1f2937', margin: 0 }}>Overview Dashboard</h1>
-          <p style={{ color: '#6b7280', marginTop: '4px', marginBottom: 0 }}>Connected Localhost Live Database Environment.</p>
-        </div>
+      {/* Premium Organized Heading Banner */}
+      <div style={{ borderBottom: '1px solid #eccad3', paddingBottom: '20px' }}>
+        <span style={{ fontSize: '12px', color: '#0d6e5c', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>OVERVIEW DASHBOARD</span>
+        <h1 style={{ fontSize: '36px', fontWeight: '800', color: '#111827', margin: '4px 0 0 0', letterSpacing: '-0.8px' }}>Good morning, admin.</h1>
+        <p style={{ color: '#6b5257', margin: '6px 0 0 0', fontSize: '16px' }}>Here is the latest dynamic activity overview across your inventory logistics database.</p>
       </div>
 
-      {/* Action Selection Controls */}
-      <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #f3f4f6', padding: '24px' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#1f2937', margin: '0 0 20px 0' }}>Quick Actions Control</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
-          <button onClick={() => setActiveForm('entry')} style={{ padding: '14px', borderRadius: '8px', border: '2px solid #bfdbfe', backgroundColor: '#ffffff', color: '#1d4ed8', fontWeight: '600', cursor: 'pointer' }}>📥 New Entry</button>
-          <button onClick={() => setActiveForm('exit')} style={{ padding: '14px', borderRadius: '8px', border: '2px solid #c7d2fe', backgroundColor: '#ffffff', color: '#4338ca', fontWeight: '600', cursor: 'pointer' }}>📤 Stock Exit</button>
-          <button onClick={() => setActiveForm('reports')} style={{ padding: '14px', borderRadius: '8px', border: '2px solid #a7f3d0', backgroundColor: '#ffffff', color: '#047857', fontWeight: '600', cursor: 'pointer' }}>📊 Reports</button>
-          <button onClick={() => setActiveForm('alerts')} style={{ padding: '14px', borderRadius: '8px', border: '2px solid #fecaca', backgroundColor: '#ffffff', color: '#b91c1c', fontWeight: '600', cursor: 'pointer' }}>⚠️ Alerts ({alerts.length})</button>
-        </div>
+      {/* Modern Compact Quick Actions Button Menu Row */}
+      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #eccad3', paddingBottom: '8px' }}>
+        <button onClick={() => setActiveForm('entry')} style={{ border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: '700', fontSize: '14px', backgroundColor: activeForm === 'entry' ? '#09473b' : 'transparent', color: activeForm === 'entry' ? '#ffffff' : '#09473b', transition: 'all 0.2s' }}>📥 Stock Entry</button>
+        <button onClick={() => setActiveForm('exit')} style={{ border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: '700', fontSize: '14px', backgroundColor: activeForm === 'exit' ? '#09473b' : 'transparent', color: activeForm === 'exit' ? '#ffffff' : '#09473b', transition: 'all 0.2s' }}>📤 Stock Exit</button>
+        <button onClick={() => setActiveForm('reports')} style={{ border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: '700', fontSize: '14px', backgroundColor: activeForm === 'reports' ? '#09473b' : 'transparent', color: activeForm === 'reports' ? '#ffffff' : '#09473b', transition: 'all 0.2s' }}>📊 Reports</button>
+        <button onClick={() => setActiveForm('alerts')} style={{ border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: '700', fontSize: '14px', backgroundColor: activeForm === 'alerts' ? '#09473b' : 'transparent', color: activeForm === 'alerts' ? '#ffffff' : '#09473b', transition: 'all 0.2s' }}>⚠️ Threshold Alerts ({alerts.length})</button>
       </div>
 
-            {/* Forms Execution Ingestion Interface */}
+      {/* --- FORMS AND SUB-PANEL DYNAMIC VIEWS --- */}
       {activeForm === 'entry' && (
-        <div style={{ backgroundColor: '#ffffff', padding: '24px', borderRadius: '12px', border: '1px solid #f3f4f6' }}>
-          <h3 style={{ margin: '0 0 16px 0', color: '#1d4ed8', fontWeight: '700' }}>📥 Incoming Logistics - Live Stock Entry</h3>
-          <form onSubmit={handleAddEntry} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-            <input type="text" placeholder="Product Name" value={entryProd} onChange={e => setEntryProd(e.target.value)} style={{ padding: '12px', borderRadius: '6px', border: '1px solid #d1d5db' }} required />
-            <input type="number" placeholder="Quantity Ingested" value={entryQty} onChange={e => setEntryQty(e.target.value)} style={{ padding: '12px', borderRadius: '6px', border: '1px solid #d1d5db' }} required />
-            <input type="text" placeholder="Supplier Company Profile Name" value={entrySup} onChange={e => setEntrySup(e.target.value)} style={{ padding: '12px', borderRadius: '6px', border: '1px solid #d1d5db' }} required />
-            
-            {/* NEW: Interactive Remarks Field Box */}
-            <input type="text" placeholder="Transaction Remarks (e.g., Damaged item replacement)" value={entryProd === 'remarks' ? '' : window.entryRemarks || ''} onChange={e => { window.entryRemarks = e.target.value; setEntryProd(entryProd); }} style={{ padding: '12px', borderRadius: '6px', border: '1px solid #d1d5db' }} />
-            
-            <button type="submit" onClick={(e) => {
-              e.preventDefault();
-              fetch('http://localhost:8080/api/entry', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ product: entryProd, qty: entryQty, supplier: entrySup, remarks: window.entryRemarks || 'Web Entry' })
-              }).then(() => {
-                alert("Stock Entry with Remarks saved into MySQL Database!");
-                setEntryProd(''); setEntryQty(''); setEntrySup(''); window.entryRemarks = '';
-                fetchDatabaseData();
-              });
-            }} style={{ padding: '12px', background: '#1d4ed8', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }}>Save Entry Log</button>
+        <div style={{ backgroundColor: '#ffffff', padding: '32px', borderRadius: '12px', border: '1px solid #eccad3', boxShadow: '0 4px 6px rgba(0,0,0,0.01)' }}>
+          <h3 style={{ margin: '0 0 20px 0', fontSize: '18px', fontWeight: '700', color: '#09473b' }}>Stock Entry Details</h3>
+          <form onSubmit={handleAddEntry} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
+            <input type="text" placeholder="Product Name" value={entryProd} onChange={e => setEntryProd(e.target.value)} style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', fontSize: '14px', outline: 'none' }} required />
+            <input type="number" placeholder="Quantity Ingested" value={entryQty} onChange={e => setEntryQty(e.target.value)} style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', fontSize: '14px', outline: 'none' }} required />
+            <input type="text" placeholder="Supplier Company Name" value={entrySup} onChange={e => setEntrySup(e.target.value)} style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', fontSize: '14px', outline: 'none' }} required />
+            <input type="text" placeholder="Transaction Remarks/Memo" value={entryRem} onChange={e => setEntryRem(e.target.value)} style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', fontSize: '14px', outline: 'none' }} />
+            <button type="submit" style={{ padding: '12px', background: '#09473b', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', fontSize: '14px' }}>Save Entry Record</button>
           </form>
         </div>
       )}
 
-
       {activeForm === 'exit' && (
-        <div style={{ backgroundColor: '#ffffff', padding: '24px', borderRadius: '12px', border: '1px solid #f3f4f6' }}>
-          <h3 style={{ margin: '0 0 16px 0', color: '#4338ca' }}>📤 Outgoing Logistics - Live Stock Exit</h3>
-          <form onSubmit={handleAddExit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-            <input type="text" placeholder="Product Name" value={exitProd} onChange={e => setExitProd(e.target.value)} style={{ padding: '12px', borderRadius: '6px', border: '1px solid #d1d5db' }} required />
-            <input type="number" placeholder="Quantity Dispatched" value={exitQty} onChange={e => setExitQty(e.target.value)} style={{ padding: '12px', borderRadius: '6px', border: '1px solid #d1d5db' }} required />
-            <input type="text" placeholder="Reason" value={exitReason} onChange={e => setExitReason(e.target.value)} style={{ padding: '12px', borderRadius: '6px', border: '1px solid #d1d5db' }} required />
-            <button type="submit" style={{ padding: '12px', background: '#4338ca', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }}>Log Stock Exit</button>
+        <div style={{ backgroundColor: '#ffffff', padding: '32px', borderRadius: '12px', border: '1px solid #eccad3', boxShadow: '0 4px 6px rgba(0,0,0,0.01)' }}>
+          <h3 style={{ margin: '0 0 20px 0', fontSize: '18px', fontWeight: '700', color: '#09473b' }}>Stock Exit Details</h3>
+          <form onSubmit={handleAddExit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
+            <input type="text" placeholder="Product Name" value={exitProd} onChange={e => setExitProd(e.target.value)} style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', fontSize: '14px', outline: 'none' }} required />
+            <input type="number" placeholder="Quantity Dispatched" value={exitQty} onChange={e => setExitQty(e.target.value)} style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', fontSize: '14px', outline: 'none' }} required />
+            <input type="text" placeholder="Dispatch Reason (e.g. Broken / Sale)" value={exitReason} onChange={e => setExitReason(e.target.value)} style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', fontSize: '14px', outline: 'none' }} required />
+            <button type="submit" style={{ padding: '12px', background: '#09473b', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer', fontSize: '14px' }}>Save Exit Record</button>
           </form>
         </div>
       )}
 
       {activeForm === 'reports' && (
-        <div style={{ backgroundColor: '#ffffff', padding: '24px', borderRadius: '12px', border: '1px solid #f3f4f6' }}>
-          <h3 style={{ margin: '0 0 16px 0', color: '#047857' }}>📊 Live MySQL Database Audit Ledger Reports</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+        <div style={{ backgroundColor: '#ffffff', padding: '32px', borderRadius: '12px', border: '1px solid #eccad3', boxShadow: '0 4px 6px rgba(0,0,0,0.01)' }}>
+          <h3 style={{ margin: '0 0 24px 0', fontSize: '18px', fontWeight: '700', color: '#09473b' }}>Reports</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px' }}>
+            
             <div>
-              <h4 style={{ color: '#334155' }}>Recent Inward Entries (Live MySQL Rows)</h4>
-              <ul style={{ paddingLeft: '20px', lineHeight: '2' }}>{entryLogs.map((log, i) => <li key={i}>{log.date} - <b>{log.product}</b> (+{log.qty} units) via {log.supplier}</li>)}</ul>
+              <h4 style={{ color: '#4a1525', fontWeight: '700', marginBottom: '14px', borderBottom: '2px solid #fff0f3', paddingBottom: '6px' }}>📥 Recent Product Entry Shipments</h4>
+              <ul style={{ paddingLeft: '16px', lineHeight: '2.2', color: '#4b5563', fontSize: '14px' }}>
+                {entryLogs.length === 0 ? <li>No entries logged yet.</li> : entryLogs.map((log, i) => (
+                  <li key={i} style={{ marginBottom: '8px' }}>
+                    {log.date} - <b style={{ color: '#09473b' }}>{log.product}</b> (+{log.qty} units) via <i>{log.supplier || 'N/A'}</i>
+                    <span style={{ display: 'block', fontSize: '12px', color: '#9ca3af', fontStyle: 'italic', paddingLeft: '8px' }}>💬 Memo: {log.remarks || 'Web Entry'}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
+
             <div>
-              <h4 style={{ color: '#334155' }}>Recent Outward Exits (Live MySQL Rows)</h4>
-              <ul style={{ paddingLeft: '20px', lineHeight: '2' }}>{exitLogs.map((log, i) => <li key={i}>{log.date} - <b>{log.product}</b> (-{log.qty} units) - {log.reason}</li>)}</ul>
+              <h4 style={{ color: '#4a1525', fontWeight: '700', marginBottom: '14px', borderBottom: '2px solid #fff0f3', paddingBottom: '6px' }}>📤 Recent Outward Dispatches</h4>
+              <ul style={{ paddingLeft: '16px', lineHeight: '2.2', color: '#4b5563', fontSize: '14px' }}>
+                {exitLogs.length === 0 ? <li>No dispatch records found.</li> : exitLogs.map((log, i) => (
+                  <li key={i} style={{ marginBottom: '8px' }}>
+                    {log.date} - <b style={{ color: '#9d2449' }}>{log.product}</b> (-{log.qty} units)
+                    <span style={{ display: 'block', fontSize: '12px', color: '#dc2626', fontWeight: '600', paddingLeft: '8px' }}>⚠️ Reason: {log.reason}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
+
           </div>
         </div>
       )}
 
       {activeForm === 'alerts' && (
-        <div style={{ backgroundColor: '#ffffff', padding: '24px', borderRadius: '12px', border: '1px solid #f3f4f6' }}>
-          <h3 style={{ margin: '0 0 16px 0', color: '#b91c1c' }}>⚠️ Active Database Low-Stock Warning Threshold Breaches</h3>
+                <div style={{ backgroundColor: '#ffffff', padding: '32px', borderRadius: '12px', border: '1px solid #eccad3', boxShadow: '0 4px 6px rgba(0,0,0,0.01)' }}>
+          <h3 style={{ margin: '0 0 20px 0', fontSize: '18px', fontWeight: '700', color: '#b91c1c' }}>Inventory Threshold Alerts</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {alerts.length === 0 ? (
-              <div style={{ color: '#16a34a', fontWeight: '500' }}>✓ All stock metrics optimal. No active reorder threshold warnings.</div>
+              <div style={{ color: '#16a34a', fontWeight: '700', fontSize: '15px' }}>✓ All catalog stock balances satisfy system safety guidelines. No active warnings.</div>
             ) : (
               alerts.map((al, idx) => (
-                <div key={idx} style={{ background: '#fee2e2', color: '#b91c1c', padding: '16px', borderRadius: '8px', border: '1px solid #fca5a5' }}>
-                  📌 <b>CRITICAL BREACH:</b> {al.product} quantity is down to <b>{al.stock} pcs</b> (Reorder Level: {al.threshold} pcs).
+                <div key={idx} style={{ background: '#fef2f2', color: '#991b1b', padding: '16px', borderRadius: '8px', border: '1px solid #fca5a5', fontSize: '14px', fontWeight: '600' }}>
+                  📌 <b>CRITICAL BREACH THRESHOLD:</b> {al.product} quantity is currently down to <span style={{ fontSize: '16px' }}>{al.stock} units</span> (Minimum required safe stock: {al.threshold} units).
                 </div>
               ))
             )}

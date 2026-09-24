@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Dashboard from './pages/Dashboard';
 
-// --- SECURE SYSTEM AUTHENTICATION MODAL GATE ---
+// --- AUTHENTICATION LOCK SCREEN GATING ---
 function LoginScreen({ onLoginSuccess }) {
   const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('');
@@ -17,8 +17,8 @@ function LoginScreen({ onLoginSuccess }) {
   };
 
   return (
-    <div style={{ minHeight: '100vh', width: '100vw', background: 'radial-gradient(circle at top, #1e293b, #0f172a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'system-ui, sans-serif', margin: 0, padding: 0 }}>
-      <div style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '16px', width: '100%', maxWidth: '400px', boxSizing: 'border-box', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
+    <div style={{ minHeight: '100vh', width: '100vw', background: 'radial-gradient(circle at top, #0d2e27, #061f1a)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'system-ui, sans-serif', margin: 0, padding: 0 }}>
+      <div style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '16px', width: '100%', maxWidth: '400px', boxSizing: 'border-box', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.3)' }}>
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <div style={{ fontSize: '48px', marginBottom: '12px' }}>🔒</div>
           <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0f172a', margin: 0 }}>System Authentication</h2>
@@ -26,8 +26,8 @@ function LoginScreen({ onLoginSuccess }) {
         {error && <div style={{ color: '#991b1b', background: '#fef2f2', padding: '10px', borderRadius: '6px', marginBottom: '16px', fontSize: '13px' }}>{error}</div>}
         <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} style={{ padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }} required />
-          <input type="password" placeholder="Password (123334)" value={password} onChange={e => setPassword(e.target.value)} style={{ padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }} required />
-          <button type="submit" style={{ background: '#2563eb', color: '#fff', border: 'none', padding: '14px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Verify & Unlock Dashboard</button>
+          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} style={{ padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }} required />
+          <button type="submit" style={{ background: '#0d6e5c', color: '#fff', border: 'none', padding: '14px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Verify & Unlock Dashboard</button>
         </form>
       </div>
     </div>
@@ -38,6 +38,9 @@ function LoginScreen({ onLoginSuccess }) {
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentView, setCurrentView] = useState('dashboard');
+  const [showProductForm, setShowProductForm] = useState(false);
+  const [showSupplierForm, setShowSupplierForm] = useState(false);
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
   
   const [dbData, setDbData] = useState({ products: [], suppliers: [], categories: [] });
 
@@ -67,103 +70,128 @@ export default function App() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', display: 'flex', flexDirection: 'column', fontFamily: 'system-ui, sans-serif' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', fontFamily: 'system-ui, -apple-system, sans-serif', backgroundColor: '#fff0f3', margin: 0, padding: 0 }}>
       
-      {/* Navbar Panel */}
-      <nav style={{ backgroundColor: '#0f172a', color: '#ffffff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '64px', padding: '0 32px', position: 'sticky', top: 0, zIndex: 100 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-          <div style={{ fontWeight: '800', fontSize: '20px', color: '#38bdf8' }}>StockMS Web</div>
-          <div style={{ display: 'flex', gap: '16px' }}>
-            <button onClick={() => setCurrentView('dashboard')} style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer', backgroundColor: currentView === 'dashboard' ? '#1e293b' : 'transparent', color: '#fff', fontWeight: '500' }}>Dashboard</button>
-            <button onClick={() => setCurrentView('products')} style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer', backgroundColor: currentView === 'products' ? '#1e293b' : 'transparent', color: '#fff', fontWeight: '500' }}>Products & Categories</button>
-            <button onClick={() => setCurrentView('suppliers')} style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer', backgroundColor: currentView === 'suppliers' ? '#1e293b' : 'transparent', color: '#fff', fontWeight: '500' }}>Suppliers</button>
-          </div>
-        </div>
-        <button onClick={() => { setIsAuthenticated(false); setCurrentView('dashboard'); }} style={{ padding: '8px 16px', color: '#f87171', backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '6px', cursor: 'pointer', fontWeight: '500' }}>Logout</button>
-      </nav>
-
-      {/* Main Container Workspace */}
-      <main style={{ flex: 1, width: '100%', maxWidth: '1280px', margin: '0 auto', padding: '32px', boxSizing: 'border-box' }}>
-        {currentView === 'dashboard' && <Dashboard />}
+      {/* 🌲 DEEP TEAL GREEN SIDEBAR MENU */}
+      <aside style={{ width: '260px', backgroundColor: '#09473b', color: '#a3d1c6', display: 'flex', flexDirection: 'column', padding: '28px 18px', boxSizing: 'border-box', borderRight: '1px solid #063328' }}>
+        <div style={{ color: '#ffffff', fontWeight: '800', fontSize: '24px', letterSpacing: '-0.5px', marginBottom: '6px' }}>StockMS</div>
+        <div style={{ fontSize: '11px', color: '#5ba393', fontWeight: '700', textTransform: 'uppercase', marginBottom: '36px', letterSpacing: '0.5px' }}>Stocks Portal</div>
         
-        {/* PRODUCTS AND CATEGORIES MANAGEMENT MODULE */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+          <button onClick={() => setCurrentView('dashboard')} style={{ width: '100%', border: 'none', padding: '12px 16px', borderRadius: '8px', cursor: 'pointer', textAlign: 'left', fontSize: '15px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: currentView === 'dashboard' ? '#0d6e5c' : 'transparent', color: currentView === 'dashboard' ? '#ffffff' : '#a3d1c6', transition: 'all 0.2s' }}>
+            <span>📊</span> Dashboard
+          </button>
+          <button onClick={() => setCurrentView('products')} style={{ width: '100%', border: 'none', padding: '12px 16px', borderRadius: '8px', cursor: 'pointer', textAlign: 'left', fontSize: '15px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: currentView === 'products' ? '#0d6e5c' : 'transparent', color: currentView === 'products' ? '#ffffff' : '#a3d1c6', transition: 'all 0.2s' }}>
+            <span>📦</span> Products & Categories
+          </button>
+          <button onClick={() => setCurrentView('suppliers')} style={{ width: '100%', border: 'none', padding: '12px 16px', borderRadius: '8px', cursor: 'pointer', textAlign: 'left', fontSize: '15px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: currentView === 'suppliers' ? '#0d6e5c' : 'transparent', color: currentView === 'suppliers' ? '#ffffff' : '#a3d1c6', transition: 'all 0.2s' }}>
+            <span>🏢</span> Suppliers
+          </button>
+        </div>
+
+        <button onClick={() => { setIsAuthenticated(false); setCurrentView('dashboard'); }} style={{ width: '100%', border: 'none', padding: '12px 16px', borderRadius: '8px', cursor: 'pointer', textAlign: 'left', fontSize: '15px', fontWeight: '600', color: '#ff8a8a', backgroundColor: 'transparent', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span>🚪</span> Exit Console
+        </button>
+      </aside>
+
+      {/* 🌸 PALE PINK MAIN WORKSPACE CONTENT FRAME */}
+      <main style={{ flex: 1, padding: '40px', boxSizing: 'border-box', overflowY: 'auto' }}>
+        {currentView === 'dashboard' && <Dashboard />}
+
+        {/* --- PRODUCTS AND CATEGORIES SCREEN VIEW --- */}
         {currentView === 'products' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-            
-            <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
-              <h3 style={{ margin: '0 0 16px 0', color: '#2563eb', fontWeight: '700' }}>📁 Create New Inventory Category</h3>
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                fetch('http://localhost:8080/api/category', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ name: e.target.catName.value, description: e.target.catDesc.value })
-                }).then(() => { alert("New Category Created!"); e.target.reset(); fetchDbData(); });
-              }} style={{ display: 'grid', gridTemplateColumns: '1fr 2fr auto', gap: '16px', alignItems: 'center' }}>
-                <input name="catName" placeholder="Category Name (e.g., Electronics)" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
-                <input name="catDesc" placeholder="Description Details" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
-                <button type="submit" style={{ padding: '12px 24px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }}>Save Category</button>
-              </form>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f0ccd4', paddingBottom: '20px' }}>
+              <div>
+                <span style={{ fontSize: '12px', color: '#0d6e5c', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>OVERVIEW</span>
+                <h1 style={{ fontSize: '32px', fontWeight: '800', color: '#111827', margin: '4px 0 0 0', letterSpacing: '-0.5px' }}>Product List</h1>
+                <p style={{ color: '#6b5257', margin: '4px 0 0 0', fontSize: '15px' }}>Here is the latest structural activity across your products.</p>
+              </div>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button onClick={() => setShowCategoryForm(!showCategoryForm)} style={{ backgroundColor: '#ffffff', color: '#09473b', border: '1px solid #eccad3', padding: '10px 18px', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '14px' }}>+ Add Category</button>
+                <button onClick={() => setShowProductForm(!showProductForm)} style={{ backgroundColor: '#09473b', color: '#ffffff', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '14px' }}>+ Add Product</button>
+              </div>
             </div>
 
-            <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
-              <h3 style={{ margin: '0 0 16px 0', color: '#16a34a', fontWeight: '700' }}>📦 Add New Master Product SKU (With Price Cost)              </h3>
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                fetch('http://localhost:8080/api/product', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    sku: e.target.pSku.value, 
-                    name: e.target.pName.value, 
-                    description: e.target.pDesc.value,
-                    category_name: e.target.pCat.value, 
-                    unit_price: e.target.pPrice.value, 
-                    initial_stock: e.target.pStock.value
-                  })
-                }).then(() => { 
-                  alert("Product Registered in MySQL!"); 
-                  e.target.reset(); 
-                  fetchDbData(); 
-                });
-              }} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
-                <input name="pSku" placeholder="SKU Code" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
-                <input name="pName" placeholder="Product Name" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
-                <input name="pDesc" placeholder="Description" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
-                <input name="pCat" placeholder="Category Name (Must Exist)" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
-                <input name="pPrice" type="number" step="0.01" placeholder="Unit Item Cost ($)" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
-                <input name="pStock" type="number" placeholder="Initial Stock Qty" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
-                <button type="submit" style={{ padding: '12px', background: '#16a34a', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }}>Register Product</button>
-              </form>
-            </div>
+            {showCategoryForm && (
+              <div style={{ backgroundColor: '#ffffff', padding: '24px', borderRadius: '12px', border: '1px solid #eccad3', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
+                <h3 style={{ margin: '0 0 16px 0', color: '#09473b', fontWeight: '700' }}>📁 Create New Category</h3>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  fetch('http://localhost:8080/api/category', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: e.target.catName.value, description: e.target.catDesc.value })
+                  }).then(() => { alert("New Category Created!"); e.target.reset(); setShowCategoryForm(false); fetchDbData(); });
+                }} style={{ display: 'grid', gridTemplateColumns: '1fr 2fr auto', gap: '16px', alignItems: 'center' }}>
+                  <input name="catName" placeholder="Category Name" style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', outline: 'none' }} required />
+                  <input name="catDesc" placeholder="Description Details" style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', outline: 'none' }} required />
+                  <button type="submit" style={{ padding: '12px 24px', background: '#09473b', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Save Category</button>
+                </form>
+              </div>
+            )}
 
-            <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '12px', border: '1px solid #e5e7eb', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
-              <h4 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: '700', color: '#1e293b' }}>Live MySQL Active Master Product Rows</h4>
-              <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #e5e7eb' }}>
+            {showProductForm && (
+              <div style={{ backgroundColor: '#ffffff', padding: '24px', borderRadius: '12px', border: '1px solid #eccad3', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
+                <h3 style={{ margin: '0 0 16px 0', color: '#09473b', fontWeight: '700' }}>📦 Add New Product SKU</h3>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  fetch('http://localhost:8080/api/product', {
+                                        method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      sku: e.target.pSku.value,
+                      name: e.target.pName.value,
+                      description: e.target.pDesc.value,
+                      category_name: e.target.pCat.value,
+                      unit_price: e.target.pPrice.value,
+                      initial_stock: e.target.pStock.value
+                    })
+                  }).then(() => { 
+                    alert("Products Registered!"); 
+                    e.target.reset(); 
+                    setShowProductForm(false); 
+                    fetchDbData(); 
+                  });
+                }} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
+                  <input name="pSku" placeholder="SKU Code" style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', outline: 'none' }} required />
+                  <input name="pName" placeholder="Product Name" style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', outline: 'none' }} required />
+                  <input name="pDesc" placeholder="Description" style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', outline: 'none' }} />
+                  <input name="pCat" placeholder="Category Profile" style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', outline: 'none' }} required />
+                  <input name="pPrice" type="number" step="0.01" placeholder="Price Cost ($)" style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', outline: 'none' }} required />
+                  <input name="pStock" type="number" placeholder="Initial Qty" style={{ padding: '12px', borderRadius: '8px', border: '1px solid #eccad3', outline: 'none' }} required />
+                  <button type="submit" style={{ padding: '12px', background: '#09473b', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}>Register Item</button>
+                </form>
+              </div>
+            )}
+
+            {/* 🎯 TABLE DESIGN WITH CRISP LAYOUT */}
+            <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #eccad3', overflow: 'hidden', boxShadow: '0 4px 10px rgba(0,0,0,0.02)' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', border: 'none' }}>
                 <thead>
-                  <tr style={{ backgroundColor: '#f8fafc', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>
-                    <th style={{ padding: '12px' }}>SKU</th>
-                    <th style={{ padding: '12px' }}>Name</th>
-                    <th style={{ padding: '12px' }}>Category</th>
-                    <th style={{ padding: '12px' }}>Unit Price Cost</th>
-                    <th style={{ padding: '12px' }}>Stock Balance</th>
+                  <tr style={{ backgroundColor: '#09473b', color: '#ffffff', textAlign: 'left' }}>
+                    <th style={{ padding: '16px', fontSize: '14px', fontWeight: '600' }}>SKU Code</th>
+                    <th style={{ padding: '16px', fontSize: '14px', fontWeight: '600' }}>Product Name</th>
+                    <th style={{ padding: '16px', fontSize: '14px', fontWeight: '600' }}>Category</th>
+                    <th style={{ padding: '16px', fontSize: '14px', fontWeight: '600' }}>Unit Cost</th>
+                    <th style={{ padding: '16px', fontSize: '14px', fontWeight: '600' }}>Stock Balance</th>
                   </tr>
                 </thead>
                 <tbody>
                   {dbData.products.length === 0 ? (
                     <tr>
-                      <td colSpan="5" style={{ padding: '16px', textAlign: 'center', color: '#64748b' }}>No product entries found in the database. Add an item above!</td>
+                      <td colSpan="5" style={{ padding: '24px', textAlign: 'center', color: '#6b5257' }}>No active product entries found in the database.</td>
                     </tr>
                   ) : (
                     dbData.products.map((p, i) => (
-                      <tr key={i} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                        <td style={{ padding: '12px', fontWeight: '600' }}>{p.sku}</td>
-                        <td style={{ padding: '12px' }}>{p.name}</td>
-                        <td style={{ padding: '12px' }}>
-                          <span style={{ background: '#f1f5f9', padding: '4px 8px', borderRadius: '4px', fontSize: '12px' }}>{p.category || 'General'}</span>
+                      <tr key={i} style={{ borderBottom: '1px solid #f0ccd4', backgroundColor: i % 2 === 0 ? '#ffffff' : '#fff9fb' }}>
+                        <td style={{ padding: '16px', fontWeight: '600', color: '#09473b' }}>{p.sku}</td>
+                        <td style={{ padding: '16px', fontWeight: '500', color: '#111827' }}>{p.name}</td>
+                        <td style={{ padding: '16px' }}>
+                          <span style={{ backgroundColor: '#fff0f3', color: '#09473b', padding: '4px 10px', borderRadius: '6px', fontSize: '13px', fontWeight: '600', border: '1px solid #f0ccd4' }}>{p.category || 'General'}</span>
                         </td>
-                        <td style={{ padding: '12px', fontWeight: '600', color: '#2563eb' }}>${parseFloat(p.price || 0).toFixed(2)}</td>
-                        <td style={{ padding: '12px', fontWeight: '600', color: p.stock <= 5 ? '#ef4444' : '#10b981' }}>{p.stock} pcs</td>
+                        <td style={{ padding: '16px', fontWeight: '700', color: '#0d6e5c' }}>${parseFloat(p.price || 0).toFixed(2)}</td>
+                        <td style={{ padding: '16px', fontWeight: '700', color: p.stock <= 5 ? '#ef4444' : '#09473b' }}>{p.stock} units</td>
                       </tr>
                     ))
                   )}
@@ -173,61 +201,67 @@ export default function App() {
           </div>
         )}
 
-        {/* SUPPLIERS DIRECTORY MODULE PANEL */}
+        {/* --- SUPPLIERS SECTION --- */}
         {currentView === 'suppliers' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-            <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
-              <h3 style={{ margin: '0 0 16px 0', color: '#ea580c', fontWeight: '700' }}>🏢 Register New Vendor / Manufacturer Profile</h3>
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                fetch('http://localhost:8080/api/supplier', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    name: e.target.sName.value,
-                    contact: e.target.sCont.value,
-                    phone: e.target.sPhone.value,
-                    email: e.target.sEmail.value,
-                    address: e.target.sAddr.value
-                  })
-                }).then(() => { 
-                  alert("New Vendor Registered in MySQL!"); 
-                  e.target.reset(); 
-                  fetchDbData(); 
-                });
-              }} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
-                <input name="sName" placeholder="Company Name" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
-                <input name="sCont" placeholder="Contact Person Name" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
-                <input name="sPhone" placeholder="Phone Line" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
-                <input name="sEmail" type="email" placeholder="Email Address" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
-                <input name="sAddr" placeholder="Physical Office Address" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
-                <button type="submit" style={{ padding: '12px 24px', background: '#ea580c', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }}>Save Vendor Row</button>
-              </form>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f0ccd4', paddingBottom: '20px' }}>
+              <div>
+                <span style={{ fontSize: '12px', color: '#0d6e5c', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>OPERATIONS RECORD</span>
+                <h1 style={{ fontSize: '32px', fontWeight: '800', color: '#111827', margin: '4px 0 0 0', letterSpacing: '-0.5px' }}>Registered Suppliers</h1>
+                <p style={{ color: '#6b5257', margin: '4px 0 0 0', fontSize: '15px' }}>Manage partner details and business contacts across your network.</p>
+              </div>
+              <button onClick={() => setShowSupplierForm(!showSupplierForm)} style={{ backgroundColor: '#09473b', color: '#ffffff', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '14px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>+ Add Supplier</button>
             </div>
 
-            <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
-              <h4 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: '700', color: '#1e293b' }}>Live Registered Supplier Directory Registers</h4>
-              <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #e5e7eb' }}>
+            {showSupplierForm && (
+              <div style={{ backgroundColor: '#ffffff', padding: '24px', borderRadius: '12px', border: '1px solid #eccad3', boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}>
+                <h3 style={{ margin: '0 0 16px 0', color: '#ea580c', fontWeight: '700' }}>🏢 Register New Vendor Profile</h3>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  fetch('http://localhost:8080/api/supplier', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      name: e.target.sName.value,
+                      contact: e.target.sCont.value,
+                      phone: e.target.sPhone.value,
+                      email: e.target.sEmail.value,
+                      address: e.target.sAddr.value
+                    })
+                  }).then(() => { alert("New Vendor Registered!"); e.target.reset(); setShowSupplierForm(false); fetchDbData(); });
+                }} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
+                  <input name="sName" placeholder="Company Name" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
+                  <input name="sCont" placeholder="Contact Person" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
+                  <input name="sPhone" placeholder="Phone Line" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
+                  <input name="sEmail" type="email" placeholder="Email Address" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
+                  <input name="sAddr" placeholder="Office Address" style={{ padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} required />
+                  <button type="submit" style={{ padding: '12px 24px', background: '#09473b', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }}>Save Supplier</button>
+                </form>
+              </div>
+            )}
+
+            <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #eccad3', overflow: 'hidden', boxShadow: '0 4px 10px rgba(0,0,0,0.02)' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', border: 'none' }}>
                 <thead>
-                  <tr style={{ backgroundColor: '#f8fafc', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>
-                    <th style={{ padding: '12px' }}>Company Vendor</th>
-                    <th style={{ padding: '12px' }}>Contact Person</th>
-                    <th style={{ padding: '12px' }}>Phone Line</th>
-                    <th style={{ padding: '12px' }}>Email</th>
+                  <tr style={{ backgroundColor: '#09473b', color: '#ffffff', textAlign: 'left' }}>
+                    <th style={{ padding: '16px', fontSize: '14px', fontWeight: '600' }}>Company Vendor</th>
+                    <th style={{ padding: '16px', fontSize: '14px', fontWeight: '600' }}>Contact Person</th>
+                    <th style={{ padding: '16px', fontSize: '14px', fontWeight: '600' }}>Phone Line</th>
+                    <th style={{ padding: '16px', fontSize: '14px', fontWeight: '600' }}>Email Address</th>
                   </tr>
                 </thead>
                 <tbody>
                   {dbData.suppliers.length === 0 ? (
                     <tr>
-                      <td colSpan="4" style={{ padding: '16px', textAlign: 'center', color: '#64748b' }}>No vendor profiles found. Add a supplier above!</td>
+                      <td colSpan="4" style={{ padding: '24px', textAlign: 'center', color: '#6b5257' }}>No vendor profiles found.</td>
                     </tr>
                   ) : (
                     dbData.suppliers.map((s, i) => (
-                      <tr key={i} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                        <td style={{ padding: '12px', fontWeight: '600' }}>{s.name}</td>
-                        <td style={{ padding: '12px' }}>{s.contact}</td>
-                        <td style={{ padding: '12px' }}>{s.phone}</td>
-                        <td style={{ padding: '12px', color: '#2563eb' }}>{s.email}</td>
+                      <tr key={i} style={{ borderBottom: '1px solid #f0ccd4', backgroundColor: i % 2 === 0 ? '#ffffff' : '#fff9fb' }}>
+                        <td style={{ padding: '16px', fontWeight: '600', color: '#09473b' }}>{s.name}</td>
+                        <td style={{ padding: '16px', color: '#111827' }}>{s.contact}</td>
+                        <td style={{ padding: '16px', color: '#6b5257' }}>{s.phone}</td>
+                        <td style={{ padding: '16px', color: '#0d6e5c', fontWeight: '500' }}>{s.email}</td>
                       </tr>
                     ))
                   )}
@@ -235,7 +269,7 @@ export default function App() {
               </table>
             </div>
           </div>
-        )}
+              )}
       </main>
     </div>
   );
